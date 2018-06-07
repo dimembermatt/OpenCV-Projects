@@ -23,10 +23,12 @@ if shape[0] != 1700 or shape[1] != 2200:
     img_sheet_music = cv2.resize(img_sheet_music, (1700, 2200)) #width, height
 
 img_gray = cv2.cvtColor(img_sheet_music, cv2.COLOR_BGR2GRAY)
-template = cv2.imread('note_head.png', 0)
+#note_head
+template = cv2.imread('empty_note_head.png', 0)
 w, h = template.shape[::-1]
-
-
+#empty_note_head
+template2 = cv2.imread('empty_note_head.png', 0)
+w2, h2 = template2.shape[::-1]
 
 #empty 2d array for (X,Y)
 X = []
