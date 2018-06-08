@@ -37,8 +37,11 @@ first = True
 key = True
 
 res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
-threshold = 0.72
+res2 = cv2.matchTemplate(img_gray, template2, cv2.IM_CCOEFF_NORMED)
+#adjust threshold 2 param
+threshold = threshold2 = 0.72
 loc = np.where( res >= threshold)
+loc2 = np.where( res2 >= threshold2)
 if loc is not None:
     for pt in sorted(zip(*loc[::-1]), key = lambda x:x[0]):
         #for each pt determine center, compare to within range of other centers
@@ -70,7 +73,37 @@ if loc is not None:
                 Y.append(nY)
                 #if in range, ignore, else draw
                 cv2.rectangle(img_sheet_music, pt, (nX + w, nY + h), (0, 0, 255), 1)
+if loc2 is not None:
+    for pt in sorted(zip(*loc2[::-1]), key = lambda x:x[0]):
+        #for each pt determine center, compare to within range of other centers
+        #get (X,Y)
+        nX = pt[0]
+        nY = pt[1]
+        #print(pt)
+        ##if first entry
+        if first is True:
+            X.append(nX)
+            Y.append(nY)
+            cv2.rectangle(img_sheet_music, pt, (nX + w2, nY + h2), (0, 0, 255), 2)
+            first = False
+        #if not first entry
+        else:
+            #go through X and Y, and check dist
+            key = True
+            for coord in zip(X, Y):
+                #if too close in X or Y dir, exclude; else add to arr and draw
 
+                dX = abs(coord[0] - nX)
+                dY = abs(coord[1] - nY)
+                if dX < 10 and dY < 10:
+                    key = False
+                    break
+
+            if key is True:
+                X.append(nX)
+                Y.append(nY)
+                #if in range, ignore, else draw
+                cv2.rectangle(img_sheet_music, pt, (nX + w2, nY + h2), (0, 0, 255), 1)
 
 #for coords in zip(X, Y):
 #    print(coords)
