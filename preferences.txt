@@ -1,0 +1,15 @@
+#preferences:
+Accumula_Town
+
+Floaroma_Town
+note_head = 73
+h_note_head = 59
+sharp = 63
+flat = 84
+natural = 72
+WR = 99 (95+)
+HR = N/A
+QR = N/A
+ER = N/A
+SR = N/A
+dot = problems
