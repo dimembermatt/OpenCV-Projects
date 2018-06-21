@@ -72,7 +72,7 @@ def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0,
     return first
 
 #init
-sheetname = "Floaroma_Town"#"Accumula_Town" #
+sheetname = "SS_Anne"#"Floaroma_Town"#"Accumula_Town" #
 img_sheet_music = cv2.imread(sheetname + '.jpg')
 
 #if wrong size, resize

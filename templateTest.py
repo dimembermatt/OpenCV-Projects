@@ -25,7 +25,7 @@ def nothing(x):
     pass
 
 #init
-sheetname = "Floaroma_Town"#"Accumula_Town" #
+sheetname = "SS_Anne"#"Floaroma_Town"#"Accumula_Town" #
 img_sheet_music = cv2.imread(sheetname + '.jpg')
 
 #if wrong size, resize
@@ -276,6 +276,12 @@ while(1):
             cv2.putText(out, 'WR', (coord[0], coord[1]), font, .5, (0, 255, 0), 2)
         if coord[2] is 7:
             cv2.putText(out, 'HR', (coord[0], coord[1]), font, .5, (0, 255, 0), 2)
+        if coord[2] is 8:
+            cv2.putText(out, 'QR', (coord[0], coord[1]), font, .5, (0, 255, 0), 2)
+        if coord[2] is 9:
+            cv2.putText(out, 'ER', (coord[0], coord[1]), font, .5, (0, 255, 0), 2)
+        if coord[2] is 10:
+            cv2.putText(out, 'SR', (coord[0], coord[1]), font, .5, (0, 255, 0), 2)
 
     cv2.imshow('out', out)
     cv2.waitKey(100)
