@@ -24,6 +24,15 @@ import copy
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
+
+class ObjectList:
+    X = None
+    Y = None
+    W = None
+    H = None
+    Type = None
+
+
 def nothing(x):
     pass
 
@@ -93,6 +102,8 @@ def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0,
                         cv2.rectangle(dst, pt, (nX + w, nY + h), (255, 0, 0), 1)
     return first
 
+
+##TODO
 #function iterateResource takes in a name of folder (found in resources) and iterates
 #findObjects for every template image in the folder.
     #param: name of folder
@@ -105,9 +116,11 @@ def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0,
     #optional param: dst - image dst to display found objects
     #implied param, return: X - reference of list of X coordinates of found objects
     #implied param, return: Y - reference of list of Y coordinates of found objects
+    #implied param, return: w - width of the template
+    #implied param, return: h - height of the template
     #implied param, return: type - reference of list of types of found objects
     #return first - boolean if list is found
-    def iterateResource(X, Y, type, name, objType, threshold, first, left = 0, top = 0, src = img_gray, dst = img_sheet_music):
+def iterateResource(X, Y, type, w, h, name, objType, threshold, first, left = 0, top = 0, src = img_gray, dst = img_sheet_music):
 #    files_list = glob.glob('/resources/')
 
     for file in files_list:
@@ -115,4 +128,57 @@ def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0,
         (tw, th) = template.shape[::-1]
         first = findObjects(X, Y, type, tw, th, objType, template, threshold, first, left, top, dst = out)
 
-    return first    
+    return first
+
+#function findStaffLines checks pixels along the X axis for each Y value and finds
+#the lines with the most amount of black pixels.
+    #param img_src - img to use as source for finding lines
+    #param img_display - img to display found lines on
+    #return: lines - list of lines with black pixel values over 1000.
+def findStaffLines(img_src = img_gray, img_display = img_sheet_music):
+    #step 1: preprocessing/Staff Lines
+        #identifying and removing staff bars in order to clarify image
+        #removing staff bars is optional. TODO: find way to remove spaces without
+        #compromising quality after removing bars
+    lines = []
+    for i in range(2200):
+        count = 0
+        for j in range(1700):
+            if img_gray[i, j] < 200:
+                count += 1
+        #print("row", i, ":", count)
+        cv2.line(img_sheet_music, (0,i), (count, i), (255, 0, 0), 1)
+        #if line is found, add to list
+        if count > 1000:
+            lines.append(i)
+    #remove lines that are duplicate within row range (too close to each other - within 8 pixels)
+    slines = []
+    for idx in range(0, len(lines)):
+        if abs(lines[idx]-lines[idx-1]) > 8:
+            slines.append(lines[idx])
+            cv2.line(img_sheet_music, (0,lines[idx]), (100, lines[idx]), (0, 0, 255), 2)
+    cv2.putText(img_sheet_music, 'Staff Lines', (35, 20), font, .5, (0, 0, 255), 2)
+    return slines
+
+#main
+#instantiate object properties to empty lists
+Objects = ObjectList()
+Objects.X = []
+Objects.Y = []
+Objects.W = []
+Objects.H = []
+Objects.Type = []
+
+#step 1 - staff line recognition
+staffLines = findStaffLines()
+
+#step 2 - object recognition
+#1 - note_head, 2 - hollow_note_head, 3 - sharp, 4 - flat, 5 - natural, 6 - whole_rest
+#7 - half_rest, 8 - quarter_rest, 9 - eighth_rest, 10 - sixteenth_rest, 11 - dot
+#-1 - treble_clef, -2 - base_clef
+first = True
+#find full note heads
+name = "head_full"
+objType = 1
+threshold = .9
+first = iterateResource(X, Y, Type, W, H, name, objType, threshold, first, )
