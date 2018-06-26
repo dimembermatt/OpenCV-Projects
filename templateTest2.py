@@ -103,7 +103,7 @@ def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0,
     return first
 
 
-##TODO
+##TODO - test independently
 #function iterateResource takes in a name of folder (found in resources) and iterates
 #findObjects for every template image in the folder.
     #param: name of folder
@@ -121,13 +121,11 @@ def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0,
     #implied param, return: type - reference of list of types of found objects
     #return first - boolean if list is found
 def iterateResource(X, Y, type, w, h, name, objType, threshold, first, left = 0, top = 0, src = img_gray, dst = img_sheet_music):
-#    files_list = glob.glob('/resources/')
-
-    for file in files_list:
+    path = 'OpenCV-Projects/resources/' + name + '/*.png'
+    for file in glob.glob(path):
         template = cv2.imread(file, 0)
         (tw, th) = template.shape[::-1]
         first = findObjects(X, Y, type, tw, th, objType, template, threshold, first, left, top, dst = out)
-
     return first
 
 #function findStaffLines checks pixels along the X axis for each Y value and finds
@@ -173,12 +171,24 @@ Objects.Type = []
 staffLines = findStaffLines()
 
 #step 2 - object recognition
-#1 - note_head, 2 - hollow_note_head, 3 - sharp, 4 - flat, 5 - natural, 6 - whole_rest
+#0 - note_head, 1 - hollow_note_head, 2 - whole_note 3 - sharp, 4 - flat, 5 - natural, 6 - whole_rest
 #7 - half_rest, 8 - quarter_rest, 9 - eighth_rest, 10 - sixteenth_rest, 11 - dot
 #-1 - treble_clef, -2 - base_clef
 first = True
+
+#TODO: calculate top and left (and/or bottom) for each staff line group and use as left/top
 #find full note heads
 name = "head_full"
+objType = 1
+threshold = .9
+first = iterateResource(X, Y, Type, W, H, name, objType, threshold, first, )
+#find hollow note heads
+name = "head_hollow"
+objType = 2
+threshold = .9
+first = iterateResource(X, Y, Type, W, H, name, objType, threshold, first, )
+#find whole note notes
+name = "head_whole"
 objType = 1
 threshold = .9
 first = iterateResource(X, Y, Type, W, H, name, objType, threshold, first, )

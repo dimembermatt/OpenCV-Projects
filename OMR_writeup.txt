@@ -1,0 +1,54 @@
+OMR Writeup:
+Refer to the OMR_Var_Relationship.html diagram for object properties.
+Refer to the InterpretableMUSformat.txt writeup for WIDTH/PITCH, etc properties.
+
+An Object has the following properties:
+  Coordinates - X, Y
+  Size - W, H
+  Identification - Type
+
+A Staff Line has the following property:
+  Y coordinate
+A staff line is grouped into sets of 5 determined by descending Y coordinate.
+
+The procedure for identifying objects is as follows.
+1. Determine and group staff lines.
+1.5 Remove staff lines by section from the image used to identify objects and
+  reclean the image.
+2. Define the bounds in which objects are identified as the topmost staff line
+  Y-coordinate + X height and the lowest staff line Y-coordinate - X height.
+  The X value determined is that which extends to encompass a hypothetical note
+  on the highest and lowest ledger line. This is assumed to be 4 space widths
+  away from the staff in either direction.
+  Note: This will have to be determined manually and an average of possible X
+  values will have to be determined to make an efficient judgement.
+3. Within these bounds of each set of staff lines, determine all objects within.
+  Procedurally, that includes note heads, flags, accidentals, rests, and
+  extraneous artefacts.
+  For each appearance of a note head, the average sum of black pixels above/below
+  is determined in order to find the flag and therefore the note WIDTH.
+  Note: This will have to be determined manually and an average sum that differs
+  consistently for multiple types of flags must be found.
+4. An array consisting of existence for each note appearance in relation to
+  artefacts such as accidentals must be filled. For example, if a quarter note
+  has a flat in front of it with a centerpoint identifiable within some range,
+  then the flat id should be marked with a 1 and put into consideration when
+  creating the final score.
+5. The final array is created. Notes are identified by their object type and
+  PITCH are determined by their centerpoint position being within the bounds
+  of two staff lines in a staff grouping. For notes that extend past the staff
+  lines, hypothetical lines are created with their y-coordinates plotted.
+  After acquiring their pitch value, each note is adjusted based on the presence
+  of accidentals and the key signature, which is separately identified at the
+  beginning. The WIDTH for each note is determined by their note head type and
+  flag value - determined in 3.
+  Since notes are ordered in terms of appearance, it is assumed that notes that
+  appear on the same beat have the same X value. Notes are ordered first by
+  identifying which notes and artefacts exist in a specific staff line set and
+  grouped by X coordinate (adjusted for template inaccuracies within a small
+  range). For each set of notes in the same X coordinate, notes are aligned
+  in the array that is a union - much like the structure in InterpretableMUSformat,
+  the value at an index could be either a delimeter or a struct with PITCH and
+  WIDTH and/or an optional designation (i.e. staccato).
+6. The final array is transcribed into a file format. This can be in binary
+  format as stipulated by the InterpretableMUSformat.txt writeup.
