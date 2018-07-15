@@ -46,6 +46,7 @@ if shape[0] != 1700 or shape[1] != 2200:
     img_sheet_music = cv2.resize(img_sheet_music, (1700, 2200)) #width, height
 #canvas program uses to determine objects
 img_gray = cv2.cvtColor(img_sheet_music, cv2.COLOR_BGR2GRAY)
+img_out = copy.copy(img_sheet_music)
 
 #function findObjects takes a template and attempts to find a list of locations of
 #objects that match the template in an image.
@@ -63,7 +64,7 @@ img_gray = cv2.cvtColor(img_sheet_music, cv2.COLOR_BGR2GRAY)
     #implied param, return: Y - reference of list of Y coordinates of found objects
     #implied param, return: type - reference of list of types of found objects
     #return first - boolean if list is found
-def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0, top = 0, src = img_gray, dst = img_sheet_music):
+def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0, top = 0, src = img_gray, dst = img_out):
     #get location of object
     res = cv2.matchTemplate(src, template, cv2.TM_CCOEFF_NORMED)
     loc = np.where( res >= threshold)
@@ -74,6 +75,7 @@ def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0,
             #get (X,Y)
             nX = pt[0]
             nY = pt[1]
+            ###nType = objType
             if nX > left and nY > top - 10:
                 #if first entry
                 if first is True:
@@ -86,11 +88,12 @@ def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0,
                 else:
                     #go through X and Y, and check dist
                     key = True
-                    for coord in zip(X, Y):
+                    for coord in zip(X, Y, type):
                         #if too close in X or Y dir, exclude; else add to arr and draw
+                        ###if coord[2] == nType :
                         dX = abs(coord[0] - nX)
                         dY = abs(coord[1] - nY)
-                        if dX < 10 and dY < 10:
+                        if dX < 10 and dY < 10 and :
                             key = False
                             break
 
@@ -120,12 +123,12 @@ def findObjects(X, Y, type, w, h, objType, template, threshold, first, left = 0,
     #implied param, return: h - height of the template
     #implied param, return: type - reference of list of types of found objects
     #return first - boolean if list is found
-def iterateResource(X, Y, type, w, h, name, objType, threshold, first, left = 0, top = 0, src = img_gray, dst = img_sheet_music):
+def iterateResource(X, Y, type, w, h, name, objType, threshold, first, left = 0, top = 0, src = img_gray, dst = img_out):
     path = 'OpenCV-Projects/resources/' + name + '/*.png'
     for file in glob.glob(path):
         template = cv2.imread(file, 0)
         (tw, th) = template.shape[::-1]
-        first = findObjects(X, Y, type, tw, th, objType, template, threshold, first, left, top, dst = out)
+        first = findObjects(X, Y, type, tw, th, objType, template, threshold, first, left, top, dst)
     return first
 
 #function findStaffLines checks pixels along the X axis for each Y value and finds
@@ -133,7 +136,7 @@ def iterateResource(X, Y, type, w, h, name, objType, threshold, first, left = 0,
     #param img_src - img to use as source for finding lines
     #param img_display - img to display found lines on
     #return: lines - list of lines with black pixel values over 1000.
-def findStaffLines(img_src = img_gray, img_display = img_sheet_music):
+def findStaffLines(img_src = img_gray, img_display = img_out):
     #step 1: preprocessing/Staff Lines
         #identifying and removing staff bars in order to clarify image
         #removing staff bars is optional. TODO: find way to remove spaces without
@@ -154,8 +157,8 @@ def findStaffLines(img_src = img_gray, img_display = img_sheet_music):
     for idx in range(0, len(lines)):
         if abs(lines[idx]-lines[idx-1]) > 8:
             slines.append(lines[idx])
-            cv2.line(img_sheet_music, (0,lines[idx]), (100, lines[idx]), (0, 0, 255), 2)
-    cv2.putText(img_sheet_music, 'Staff Lines', (35, 20), font, .5, (0, 0, 255), 2)
+            cv2.line(img_display, (0,lines[idx]), (100, lines[idx]), (0, 0, 255), 2)
+    cv2.putText(img_display, 'Staff Lines', (35, 20), font, .5, (0, 0, 255), 2)
     return slines
 
 #main
@@ -172,23 +175,147 @@ staffLines = findStaffLines()
 
 #step 2 - object recognition
 #0 - note_head, 1 - hollow_note_head, 2 - whole_note 3 - sharp, 4 - flat, 5 - natural, 6 - whole_rest
-#7 - half_rest, 8 - quarter_rest, 9 - eighth_rest, 10 - sixteenth_rest, 11 - dot
-#-1 - treble_clef, -2 - base_clef
+#7 - half_rest, 8 - quarter_rest, 9 - eighth_rest, 10 - sixteenth_rest, 11 - dot, 12 - repeat, 13 - repeat_end
+#-1 - base_clef, -2 - treble_clef
 first = True
 
 #TODO: calculate top and left (and/or bottom) for each staff line group and use as left/top
 #find full note heads
 name = "head_full"
-objType = 1
+objType = 0
 threshold = .9
-first = iterateResource(X, Y, Type, W, H, name, objType, threshold, first, )
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
 #find hollow note heads
 name = "head_hollow"
-objType = 2
-threshold = .9
-first = iterateResource(X, Y, Type, W, H, name, objType, threshold, first, )
-#find whole note notes
-name = "head_whole"
 objType = 1
 threshold = .9
-first = iterateResource(X, Y, Type, W, H, name, objType, threshold, first, )
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find whole note notes
+name = "head_whole"
+objType = 2
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find sharps
+name = "accidental_sharp"
+objType = 3
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find flats
+name = "accidental_flat"
+objType = 4
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find naturals
+name = "accidental_natural"
+objType = 5
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find whole rests
+name = "rest_whole"
+objType = 6
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find half rests
+name = "rest_half"
+objType = 7
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find quarter rests
+name = "rest_quarter"
+objType = 8
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find eighth rests
+name = "rest_eighth"
+objType = 9
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find sixteenth rests
+name = "rest_sixteenth"
+objType = 10
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find base clef
+name = "clef_base"
+objType = -1
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find treble clef
+name = "clef_treble"
+objType = -2
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find dot
+name = "dot"
+objType = 11
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find repeat
+name = "repeat"
+objType = 12
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+#find repeat ends
+name = "repeat_end"
+objType = 13
+threshold = .9
+first = iterateResource(Objects.X, Objects.Y, Objects.Type, Objects.W, Objects.H, name, objType, threshold, first, )
+
+
+#display output of processes occuring to the sheetmusic
+#write centerpoint dot for each note_head as well as type
+for coord in (zip(Objects.X, Objects.Y, Objects.W, Objects.H, Objects.Type))
+    if coord[4] is -2:
+        cv2.putText(img_out, 'Treble Clef', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is -1:
+        cv2.putText(img_out, 'Base Clef', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 0:
+        cv2.putText(img_out, 'Full Note Head', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 1:
+        cv2.putText(img_out, 'Hollow Note Head', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 2:
+        cv2.putText(img_out, 'Whole Note Head', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 3:
+        cv2.putText(img_out, 'Sharp', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 4:
+        cv2.putText(img_out, 'Flat', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 5:
+        cv2.putText(img_out, 'Natural', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 6:
+        cv2.putText(img_out, 'Whole Rest', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 7:
+        cv2.putText(img_out, 'Half Rest', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 8:
+        cv2.putText(img_out, 'Quarter Rest', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 9:
+        cv2.putText(img_out, 'Eighth Rest', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 10:
+        cv2.putText(img_out, 'Sixteenth Rest', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 11:
+        cv2.putText(img_out, 'Dot', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 12:
+        cv2.putText(img_out, 'Repeat', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+    if coord[4] is 13:
+        cv2.putText(img_out, 'Repeat End', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
+        cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+
+cv2.imshow('out', img_out)
+cv2.waitKey(0)
+
+cv2.destroyAllWindows()
+cv2.imwrite(sheetname + 'v2.png', img_out)
