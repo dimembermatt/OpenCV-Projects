@@ -25,7 +25,7 @@ def nothing(x):
     pass
 
 #init
-sheetname = "SS_Anne"#"Floaroma_Town"#"Accumula_Town" #
+sheetname = "./sheet_music/SS_Anne"#"Floaroma_Town"#"Accumula_Town" #
 img_sheet_music = cv2.imread(sheetname + '.jpg')
 
 #if wrong size, resize
