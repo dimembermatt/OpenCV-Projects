@@ -13,3 +13,41 @@ QR = N/A
 ER = N/A
 SR = N/A
 dot = problems
+
+
+#version 2
+S.S. Anne
+full_note_head = 86
+hollow_note_head = 88
+whole_note_head = 95
+sharp = N/A
+flat = N/A
+natural = N/A
+whole_rest = N/A
+half_rest = 93
+quarter_rest = 85
+eighth_rest = 93
+sixteenth_rest = N/A
+dot = N/A
+repeat = N/A
+repeat_end = N/A
+base_clef = 95
+treble_clef = 89
+
+Goldenrod City
+full_note_head = 86
+hollow_note_head = 88
+whole_note_head = 95
+sharp = 95
+flat = N/A
+natural = N/A
+whole_rest = N/A
+half_rest = 93
+quarter_rest = 85
+eighth_rest = 93
+sixteenth_rest = N/A
+dot = N/A
+repeat = N/A  ---BROKEN - determine fix for resources, whether to apply or quit if repeat is detected
+repeat_end = N/A --- different types of repeat signals, etc
+base_clef = 92
+treble_clef = 89

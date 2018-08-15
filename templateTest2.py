@@ -37,7 +37,7 @@ def nothing(x):
     pass
 
 #init
-sheetname = "./sheet_music/SS_Anne"#"Floaroma_Town"#"Accumula_Town" #
+sheetname = "./sheet_music/Goldenrod City"#"Floaroma_Town"#"Accumula_Town" #
 img_sheet_music = cv2.imread(sheetname + '.jpg')
 
 #if wrong size, resize
@@ -86,7 +86,7 @@ def findObjects(X, Y, type, W, H, tw, th, objType, template, threshold, first, l
                     W.append(tw)
                     H.append(th)
                     type.append(objType)
-                    cv2.rectangle(dst, pt, (nX + tw, nY + th), (255, 0, 0), 2)
+                    #cv2.rectangle(dst, pt, (nX + tw, nY + th), (255, 0, 0), 2)
                     first = False
                 #if not first entry
                 else:
@@ -97,7 +97,7 @@ def findObjects(X, Y, type, W, H, tw, th, objType, template, threshold, first, l
                         ###if coord[2] == nType :
                         dX = abs((coord[0] + coord[2]/2) - (nX + tw/2))
                         dY = abs((coord[1] + coord[3]/2) - (nY + th/2))
-                        if dX < 15 and dY < 15 and nType == coord[4]:
+                        if dX < 10 and dY < 10 and nType == coord[4]:
                             key = False
                             break
 
@@ -108,7 +108,7 @@ def findObjects(X, Y, type, W, H, tw, th, objType, template, threshold, first, l
                         H.append(th)
                         type.append(objType)
                         #if in range, ignore, else draw
-                        cv2.rectangle(dst, pt, (nX + tw, nY + th), (255, 0, 0), 1)
+                        #cv2.rectangle(dst, pt, (nX + tw, nY + th), (255, 0, 0), 1)
     return first
 
 
@@ -314,52 +314,52 @@ while(1):
     for coord in zip(Objects.X, Objects.Y, Objects.W, Objects.H, Objects.Type):
         if coord[4] is -2:
             cv2.putText(img_out, 'T_C', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is -1:
             cv2.putText(img_out, 'B_C', (coord[0], coord[1]), font, .5, (0, 0, 255), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 0:
             cv2.putText(img_out, 'F_NH', (coord[0], coord[1]), font, .5, (255, 0, 255), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 1:
             cv2.putText(img_out, 'H_NH', (coord[0], coord[1]), font, .5, (255, 0, 255), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 2:
             cv2.putText(img_out, 'W_NH', (coord[0], coord[1]), font, .5, (255, 0, 255), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 3:
             cv2.putText(img_out, 'S', (coord[0], coord[1]), font, .5, (0, 255, 255), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 4:
             cv2.putText(img_out, 'F', (coord[0], coord[1]), font, .5, (0, 255, 255), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 5:
             cv2.putText(img_out, 'N', (coord[0], coord[1]), font, .5, (0, 255, 255), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 6:
             cv2.putText(img_out, 'W_R', (coord[0], coord[1]), font, .5, (255, 0, 0), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 7:
             cv2.putText(img_out, 'H_R', (coord[0], coord[1]), font, .5, (255, 0, 0), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 8:
             cv2.putText(img_out, 'Q_R', (coord[0], coord[1]), font, .5, (255, 0, 0), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 9:
             cv2.putText(img_out, 'E_R', (coord[0], coord[1]), font, .5, (255, 0, 0), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 10:
             cv2.putText(img_out, 'S_R', (coord[0], coord[1]), font, .5, (255, 0, 0), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 11:
             cv2.putText(img_out, 'Dot', (coord[0], coord[1]), font, .5, (0, 255, 0), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 12:
             cv2.putText(img_out, 'R', (coord[0], coord[1]), font, .5, (0, 255, 0), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
         if coord[4] is 13:
             cv2.putText(img_out, 'R_E', (coord[0], coord[1]), font, .5, (0, 255, 0), 2)
-            cv2.circle(img_out, (int(coord[0] + coord[3]/2), int(coord[1] + coord[4]/2)), 2, (255, 0, 0))
+            cv2.rectangle(img_out, (coord[0], coord[1]), (coord[0] + coord[2], coord[1] + coord[3]), (0, 0, 255), 1)
 
     cv2.imshow('img_out', img_out)
     cv2.waitKey(0)
